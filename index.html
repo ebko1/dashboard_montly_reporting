@@ -3,414 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TeamSparta 손익 대시보드 (2026년 1~2월)</title>
+<title>TeamSparta P&L Dashboard (2026.01~02)</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: #f0f2f5; color: #1a1a2e; }
-
-  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; padding: 24px 40px; }
-  .header h1 { font-size: 22px; font-weight: 700; }
-  .header p { font-size: 13px; color: #8b8fa3; margin-top: 4px; }
-
-  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
-
-  /* KPI 카드 */
-  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-  .kpi-card { background: #fff; border-radius: 12px; padding: 20px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-  .kpi-card .label { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-  .kpi-card .value { font-size: 28px; font-weight: 700; }
-  .kpi-card .sub { font-size: 12px; color: #6b7280; margin-top: 4px; }
-  .kpi-card .positive { color: #10b981; }
-  .kpi-card .negative { color: #ef4444; }
-
-  /* 필터 */
-  .filter-bar { background: #fff; border-radius: 12px; padding: 16px 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-  .filter-bar label { font-size: 13px; font-weight: 600; color: #374151; }
-  .filter-bar select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; background: #f9fafb; min-width: 160px; }
-  .filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-  .chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid #d1d5db; background: #fff; transition: all 0.15s; }
-  .chip:hover { border-color: #6366f1; color: #6366f1; }
-  .chip.active { background: #6366f1; color: #fff; border-color: #6366f1; }
-
-  /* 차트 그리드 */
-  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-  .chart-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-  .chart-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: #1f2937; }
-  .chart-card canvas { max-height: 320px; }
-  .chart-full { grid-column: 1 / -1; }
-
-  /* 테이블 */
-  .table-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 24px; }
-  .table-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { background: #f8fafc; padding: 10px 12px; text-align: right; font-weight: 600; color: #4b5563; border-bottom: 2px solid #e5e7eb; }
-  th:first-child { text-align: left; }
-  td { padding: 10px 12px; text-align: right; border-bottom: 1px solid #f3f4f6; }
-  td:first-child { text-align: left; font-weight: 500; }
-  tr:hover { background: #f8fafc; }
-  .num-pos { color: #10b981; }
-  .num-neg { color: #ef4444; }
-
-  @media (max-width: 900px) {
-    .kpi-row { grid-template-columns: repeat(2, 1fr); }
-    .chart-grid { grid-template-columns: 1fr; }
-  }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard','Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:#f0f2f5;color:#1a1a2e;font-size:13px}
+.hd{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:18px 32px;display:flex;justify-content:space-between;align-items:center}
+.hd h1{font-size:18px}.hd .sub{font-size:11px;color:#8b8fa3;margin-top:2px}
+.ct{max-width:1500px;margin:0 auto;padding:20px}
+.tabs{display:flex;gap:4px;margin-bottom:18px;background:#fff;border-radius:10px;padding:4px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tab{padding:9px 18px;border-radius:8px;cursor:pointer;font-weight:500;font-size:13px;transition:all .15s}
+.tab:hover{background:#f3f4f6}.tab.on{background:#6366f1;color:#fff}
+.fb{background:#fff;border-radius:10px;padding:12px 18px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.08);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fb label{font-size:11px;font-weight:600;color:#6b7280}
+.chip{padding:4px 11px;border-radius:16px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid #d1d5db;background:#fff;transition:all .15s}
+.chip:hover{border-color:#6366f1;color:#6366f1}.chip.on{background:#6366f1;color:#fff;border-color:#6366f1}
+.tgl{display:flex;gap:2px;background:#e5e7eb;border-radius:8px;padding:2px;margin-left:auto}
+.tgl .b{padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500}.tgl .b.on{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.kr{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
+.kc{background:#fff;border-radius:10px;padding:14px 18px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.kc .lb{font-size:10px;color:#6b7280;margin-bottom:5px}.kc .vl{font-size:20px;font-weight:700}.kc .sm{font-size:10px;color:#9ca3af;margin-top:2px}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.cc{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.cc h3{font-size:13px;font-weight:600;margin-bottom:12px}.cc canvas{max-height:280px}
+.cf{grid-column:1/-1}
+.ps{background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:16px;overflow-x:auto}
+.ps h3{padding:14px 18px 0;font-size:13px;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}
+th{background:#f8fafc;padding:7px 12px;text-align:right;font-weight:600;color:#4b5563;border-bottom:2px solid #e5e7eb;position:sticky;top:0}
+th:first-child{text-align:left;min-width:130px}
+td{padding:6px 12px;text-align:right;border-bottom:1px solid #f3f4f6}
+td:first-child{text-align:left;font-weight:500}
+tr:hover{background:#fafbfc}
+.r1 td{font-weight:600;background:#f8fafc}
+.rs td{font-weight:700;border-top:2px solid #374151;background:#eef2ff}
+.rg td{height:6px;border:none;background:transparent}
+.ri td:first-child{padding-left:28px;font-weight:400;color:#4b5563}
+.p{color:#10b981}.n{color:#ef4444}
+.hid{display:none}
+@media(max-width:1000px){.kr{grid-template-columns:repeat(2,1fr)}.cg{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<div class="header">
-  <h1>TeamSparta Monthly P&L Dashboard</h1>
-  <p>2026년 1~2월 실적 · master_file_0318_2026 기준</p>
+<div class="hd"><div><h1>TeamSparta Monthly P&L Dashboard</h1><div class="sub">Financial Reporting (By product_monthly) 기준 &middot; 2026년 1~2월</div></div></div>
+<div class="ct">
+<div class="tabs" id="tabs"><div class="tab on" data-t="ov">Overview</div><div class="tab" data-t="pl">사업부 손익표</div><div class="tab" data-t="cp">사업부 비교</div></div>
+<div class="fb"><label>사업부</label><div id="chips" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+<div class="tgl" id="tgl"><div class="b on" data-l="l1">L1 요약</div><div class="b" data-l="l2">L2 상세</div></div></div>
+<div id="t-ov"><div class="kr" id="kpi"></div>
+<div class="cg"><div class="cc cf"><h3>월별 매출 / 비용 / 영업이익</h3><canvas id="c1"></canvas></div>
+<div class="cc"><h3>사업부별 매출 (1~2월 합계)</h3><canvas id="c2"></canvas></div>
+<div class="cc"><h3>비용 항목별 구성</h3><canvas id="c3"></canvas></div></div></div>
+<div id="t-pl" class="hid"></div>
+<div id="t-cp" class="hid"><div class="cg"><div class="cc cf"><h3>사업부별 영업이익</h3><canvas id="c4"></canvas></div></div>
+<div class="ps"><table id="cpt"></table></div></div>
 </div>
-
-<div class="container">
-  <!-- KPI -->
-  <div class="kpi-row" id="kpiRow"></div>
-
-  <!-- 필터 -->
-  <div class="filter-bar">
-    <label>사업부 필터</label>
-    <div class="filter-chips" id="filterChips"></div>
-  </div>
-
-  <!-- 차트 -->
-  <div class="chart-grid">
-    <div class="chart-card chart-full">
-      <h3>월별 매출 · 비용 · 영업이익 추이</h3>
-      <canvas id="trendChart"></canvas>
-    </div>
-    <div class="chart-card">
-      <h3>사업부별 매출 비교 (1~2월 합계)</h3>
-      <canvas id="revChart"></canvas>
-    </div>
-    <div class="chart-card">
-      <h3>사업부별 영업이익 비교 (1~2월 합계)</h3>
-      <canvas id="profitChart"></canvas>
-    </div>
-  </div>
-
-  <!-- 상세 테이블 -->
-  <div class="table-card">
-    <h3>사업부별 월간 손익 상세</h3>
-    <table id="detailTable"></table>
-  </div>
-
-  <!-- 비용 구성 -->
-  <div class="chart-grid">
-    <div class="chart-card chart-full">
-      <h3 id="costTitle">비용 항목별 구성 (선택된 사업부)</h3>
-      <canvas id="costChart"></canvas>
-    </div>
-  </div>
-</div>
-
 <script>
-// ── 데이터 ──
-const RAW = {"B2B":{"1":{"revenue":37588046,"cost":-268403666,"op_profit":-230815620,"extra":0},"2":{"revenue":172305455,"cost":-298529139,"op_profit":-126223684,"extra":0}},"B2C신사업":{"1":{"revenue":78513847,"cost":-178713839,"op_profit":-100199992,"extra":0},"2":{"revenue":192631666,"cost":-193693843,"op_profit":-1062177,"extra":0}},"KDC":{"1":{"revenue":448247500,"cost":-331755038,"op_profit":116492462,"extra":0},"2":{"revenue":494653210,"cost":-327842349,"op_profit":166810861,"extra":-967760}},"KDT":{"1":{"revenue":5537419930,"cost":-2902684796,"op_profit":2634735134,"extra":0},"2":{"revenue":4014318106,"cost":-2741342711,"op_profit":1272975395,"extra":2095632}},"SC":{"1":{"revenue":2510000,"cost":-25781555,"op_profit":-23271555,"extra":1275429},"2":{"revenue":3210000,"cost":-12772349,"op_profit":-9562349,"extra":1516015}},"b2b":{"1":{"revenue":13277182,"cost":-32132971,"op_profit":-18855789,"extra":0},"2":{"revenue":0,"cost":-10837485,"op_profit":-10837485,"extra":0}},"b2c신사업":{"1":{"revenue":0,"cost":-41810,"op_profit":-41810,"extra":0},"2":{"revenue":0,"cost":0,"op_profit":0,"extra":0}},"게임":{"1":{"revenue":394196864,"cost":-585308997,"op_profit":-191112133,"extra":-1493616},"2":{"revenue":812627562,"cost":-669309940,"op_profit":143317622,"extra":-348154}},"글로벌":{"1":{"revenue":0,"cost":-16746270,"op_profit":-16746270,"extra":0},"2":{"revenue":0,"cost":-19516203,"op_profit":-19516203,"extra":0}},"사업공통":{"1":{"revenue":0,"cost":-278115700,"op_profit":-278115700,"extra":0},"2":{"revenue":0,"cost":-303864706,"op_profit":-303864706,"extra":-330098}},"스튜디오":{"1":{"revenue":81900978,"cost":-53184343,"op_profit":28716635,"extra":2},"2":{"revenue":66613972,"cost":-50053764,"op_profit":16560208,"extra":6}},"외주":{"1":{"revenue":0,"cost":-13326036,"op_profit":-13326036,"extra":0},"2":{"revenue":0,"cost":-126882325,"op_profit":-126882325,"extra":0}},"이노캠":{"1":{"revenue":0,"cost":-5542000,"op_profit":-5542000,"extra":0},"2":{"revenue":0,"cost":0,"op_profit":0,"extra":0}},"재직자KDT":{"1":{"revenue":276536020,"cost":-209283797,"op_profit":67252223,"extra":0},"2":{"revenue":168862670,"cost":-190440496,"op_profit":-21577826,"extra":0}},"전사공통":{"1":{"revenue":0,"cost":-2084449588,"op_profit":-2084449588,"extra":-744062731},"2":{"revenue":0,"cost":-821138347,"op_profit":-821138347,"extra":-19808371}},"커리어":{"1":{"revenue":0,"cost":-193717793,"op_profit":-193717793,"extra":0},"2":{"revenue":0,"cost":-168660824,"op_profit":-168660824,"extra":-15999946}},"항해":{"1":{"revenue":0,"cost":-19933491,"op_profit":-19933491,"extra":0},"2":{"revenue":1800000,"cost":-3425077,"op_profit":-1625077,"extra":0}}};
-
-const DETAIL = {"SC_1":{"영업수익":2510000,"매출할인":-1035000,"직원급여":-1456668,"퇴직급여":-121027,"4대보험":-126524,"지급수수료":-108000,"광고선전비":-2648336,"외주용역비":-20286000},"B2C신사업_1":{"영업수익":78513847,"매출할인":-14309200,"직원급여":-41242934,"퇴직급여":-5305126,"4대보험":-2334351,"복리후생비":-1656820,"직무수행비":-39409,"여비교통비":-683880,"접대비":-391200,"도서인쇄비":-506820,"지급수수료":-9570231,"광고선전비":-72700238,"외주용역비":-29973630},"게임_1":{"영업수익":394196864,"직원급여":-89558750,"상여금":-18055560,"퇴직급여":-10187239,"4대보험":-8412720,"복리후생비":-6423464,"직무수행비":-131818,"여비교통비":-2326880,"교육훈련비":-335546,"도서인쇄비":-495270,"소모품비":-872963,"지급수수료":-55337840,"광고선전비":-385720679,"외주용역비":-7450268},"B2B_1":{"영업수익":37588046,"직원급여":-68530851,"퇴직급여":-11327333,"4대보험":16577200,"복리후생비":-12727,"지급수수료":-10717866,"광고선전비":-40328114,"외주용역비":-154063975},"b2b_1":{"영업수익":13277182,"복리후생비":-2706147,"직무수행비":-97091,"여비교통비":-2040370,"접대비":-327900,"운반비":-131860,"교육훈련비":-204000,"도서인쇄비":-275940,"소모품비":-27536,"지급수수료":-24857076,"광고선전비":-1665051,"외주용역비":200000},"KDC_1":{"영업수익":448247500,"직원급여":-58653652,"퇴직급여":-12463809,"4대보험":-4338500,"복리후생비":-662455,"직무수행비":-17182,"여비교통비":-421600,"운반비":-4500,"교육훈련비":-272909,"도서인쇄비":-910840,"지급수수료":-11162572,"광고선전비":-189651624,"외주용역비":-53195395},"재직자KDT_1":{"영업수익":276536020,"직원급여":-47166284,"상여금":-660000,"퇴직급여":-1611305,"4대보험":-3621377,"복리후생비":-381545,"직무수행비":-40182,"여비교통비":-381700,"보험료":-30000,"교육훈련비":-27273,"도서인쇄비":-462620,"지급수수료":-2040884,"광고선전비":-31275621,"외주용역비":-121585006},"KDT_1":{"영업수익":5537419930,"직원급여":-393745287,"상여금":-8050000,"퇴직급여":-35798088,"4대보험":-33035017,"복리후생비":-6079402,"직무수행비":-547156,"여비교통비":-2232320,"접대비":-4689360,"감가상각비":-8692712,"보험료":-602200,"운반비":-40400,"교육훈련비":-2242782,"도서인쇄비":-5437315,"소모품비":-329039,"지급수수료":-164556112,"광고선전비":-865601875,"외주용역비":-1497550631,"사업개발비지원금":126544900},"스튜디오_1":{"영업수익":81900978,"통신비":-234211,"지급수수료":-52950132},"글로벌_1":{"직원급여":-9500010,"퇴직급여":-789310,"4대보험":-856010,"복리후생비":-31363,"여비교통비":-2828483,"지급임차료":-1454453,"교육훈련비":-13636,"도서인쇄비":-137320,"소모품비":-571648,"지급수수료":-564037},"사업공통_1":{"직원급여":-147122970,"퇴직급여":-28843946,"4대보험":-10237960,"복리후생비":-2592733,"직무수행비":-557270,"여비교통비":-1141970,"통신비":-800800,"교육훈련비":-811923,"도서인쇄비":-1679020,"소모품비":-166609,"지급수수료":-59517242,"광고선전비":-13660057,"외주용역비":-10983200},"외주_1":{"직원급여":-23877180,"퇴직급여":-4641492,"4대보험":20767010,"복리후생비":-277454,"직무수행비":-10182,"여비교통비":-681100,"운반비":-25300,"도서인쇄비":-61800,"지급수수료":-2847138,"광고선전비":-621400,"외주용역비":-1050000},"전사공통_1":{"직원급여":-194832838,"상여금":-1000000000,"퇴직급여":-19100688,"4대보험":-14086301,"복리후생비":-147012656,"직무수행비":-772546,"여비교통비":-3673692,"접대비":-3979102,"통신비":-2976610,"세금과공과금":-11098710,"감가상각비":-58813892,"지급임차료":-135779230,"경상연구개발비":-17437993,"운반비":-182400,"교육훈련비":-2624837,"도서인쇄비":-14291663,"소모품비":-39540163,"지급수수료":-342172717,"광고선전비":-82500000,"무형고정자산상각":-773550,"사업개발비지원금":7200000},"커리어_1":{"직원급여":-60622638,"퇴직급여":-1400123,"4대보험":-4452670,"복리후생비":-1790634,"직무수행비":-158637,"여비교통비":-985000,"접대비":-10800,"교육훈련비":-81818,"도서인쇄비":-575454,"지급수수료":-1870135,"광고선전비":-1704250,"외주용역비":-120065634},"항해_1":{"지급수수료":-146151,"외주용역비":-19787340},"b2c신사업_1":{"지급수수료":-41810},"이노캠_1":{"외주용역비":-5542000},"B2B_2":{"영업수익":172305455,"직원급여":-77442898,"퇴직급여":-4872891,"4대보험":-62547940,"복리후생비":-2305401,"직무수행비":-129491,"여비교통비":-785500,"교육훈련비":-90000,"도서인쇄비":-401660,"지급수수료":-42934500,"광고선전비":-17555858,"외주용역비":-89463000},"SC_2":{"영업수익":3210000,"매출할인":-380000,"지급수수료":-102000,"광고선전비":-2338529,"외주용역비":-9951820},"B2C신사업_2":{"영업수익":192631666,"매출할인":-89858000,"직원급여":-22709415,"퇴직급여":-1619896,"4대보험":-5252360,"복리후생비":-710000,"직무수행비":-200999,"여비교통비":-262400,"접대비":-136100,"운반비":-4800,"교육훈련비":-225455,"도서인쇄비":-272500,"소모품비":-105363,"지급수수료":-4551514,"광고선전비":-51508374,"외주용역비":-16276667},"항해_2":{"영업수익":1800000,"지급수수료":-105077,"외주용역비":-3320000},"KDC_2":{"영업수익":494653210,"직원급여":-48519825,"퇴직급여":-5591476,"4대보험":-4851312,"복리후생비":-349545,"직무수행비":-37364,"여비교통비":-204800,"접대비":-78840,"교육훈련비":-292500,"도서인쇄비":-271890,"지급수수료":-9519833,"광고선전비":-217814182,"외주용역비":-40310782},"재직자KDT_2":{"영업수익":168862670,"직원급여":-47306678,"상여금":-630000,"퇴직급여":-2501210,"4대보험":-4396006,"복리후생비":-189817,"여비교통비":-149400,"도서인쇄비":-116350,"지급수수료":-9934950,"광고선전비":-117577335,"외주용역비":-7638750},"KDT_2":{"영업수익":4014318106,"직원급여":-385213029,"상여금":-6770000,"퇴직급여":-26574485,"4대보험":-35202751,"복리후생비":-4218939,"직무수행비":-352910,"여비교통비":-1826030,"접대비":-3252498,"감가상각비":-19263025,"운반비":-69300,"교육훈련비":-2449773,"도서인쇄비":-4696870,"지급수수료":-133434423,"광고선전비":-775457732,"외주용역비":-1397459346,"사업개발비지원금":54898400},"스튜디오_2":{"영업수익":66613972,"통신비":-228133,"지급수수료":-49825631},"게임_2":{"영업수익":812627562,"직원급여":-90069085,"상여금":-18055560,"퇴직급여":-5682573,"4대보험":-8579000,"복리후생비":-2558321,"여비교통비":-1603880,"접대비":-40000,"도서인쇄비":-876630,"지급수수료":-106968006,"광고선전비":-419374522,"외주용역비":-15502363},"글로벌_2":{"직원급여":-9500010,"퇴직급여":-1749266,"4대보험":-855850,"복리후생비":-292923,"직무수행비":-28820,"여비교통비":-4347464,"지급임차료":-1519820,"교육훈련비":-90000,"도서인쇄비":-184760,"소모품비":-156868,"지급수수료":-790422},"사업공통_2":{"직원급여":-162347533,"퇴직급여":-40309148,"4대보험":-15454225,"복리후생비":-3514427,"직무수행비":-1624438,"여비교통비":-771200,"접대비":-1199700,"통신비":-800800,"교육훈련비":-445455,"도서인쇄비":-1581620,"소모품비":-339318,"지급수수료":-59042452,"광고선전비":-11098890,"외주용역비":-5335500},"외주_2":{"직원급여":-33678595,"퇴직급여":-1980293,"4대보험":-56680200,"복리후생비":-504562,"직무수행비":-116818,"여비교통비":-610700,"접대비":-149800,"도서인쇄비":-192400,"지급수수료":-22492438,"광고선전비":-4326519,"외주용역비":-6150000},"전사공통_2":{"직원급여":-191803664,"퇴직급여":-17535788,"4대보험":-17122697,"복리후생비":-72776771,"직무수행비":-654044,"여비교통비":-3305004,"접대비":-5135990,"통신비":-4525546,"세금과공과금":-24503920,"감가상각비":-91383532,"경상연구개발비":-18997890,"운반비":-166210,"교육훈련비":-3632886,"도서인쇄비":-2932250,"소모품비":-67518377,"지급수수료":-316970097,"광고선전비":-1200187,"무형고정자산상각":-773494,"사업개발비지원금":19800000},"커리어_2":{"직원급여":-51650494,"퇴직급여":-3735905,"4대보험":-3645649,"복리후생비":-656456,"직무수행비":-109363,"여비교통비":-407300,"교육훈련비":-90000,"도서인쇄비":-246770,"지급수수료":-306343,"광고선전비":-145500,"외주용역비":-107667044},"b2b_2":{"복리후생비":-50818,"여비교통비":-442600,"접대비":-917000,"운반비":-41280,"지급수수료":-4292039,"광고선전비":-5093748}};
-
-const PRODUCTS = Object.keys(RAW);
-const MONTHS = [1, 2];
-const MONTH_LABELS = ['1월', '2월'];
-
-// ── 유틸 ──
-const fmt = v => {
-  if (v === 0) return '-';
-  const m = v / 1e6;
-  return (m >= 0 ? '' : '') + m.toLocaleString('ko-KR', {maximumFractionDigits: 0}) + 'M';
-};
-const fmtFull = v => v.toLocaleString('ko-KR') + '원';
-const fmtM = v => (v / 1e6).toLocaleString('ko-KR', {maximumFractionDigits: 0});
-
-// ── 상태 ──
-let selectedBUs = new Set(PRODUCTS);
-let charts = {};
-
-// ── 집계 함수 ──
-function aggregate() {
-  const totals = MONTHS.map(m => {
-    let rev = 0, cost = 0, profit = 0;
-    for (const bu of selectedBUs) {
-      const d = RAW[bu]?.[m];
-      if (d) { rev += d.revenue; cost += d.cost; profit += d.op_profit; }
-    }
-    return { rev, cost: Math.abs(cost), profit };
-  });
-  return totals;
-}
-
-function buTotals() {
-  const arr = [];
-  for (const bu of PRODUCTS) {
-    if (!selectedBUs.has(bu)) continue;
-    let rev = 0, cost = 0, profit = 0;
-    for (const m of MONTHS) {
-      const d = RAW[bu]?.[m];
-      if (d) { rev += d.revenue; cost += d.cost; profit += d.op_profit; }
-    }
-    arr.push({ bu, rev, cost, profit });
-  }
-  return arr.sort((a, b) => b.rev - a.rev);
-}
-
-// ── KPI ──
-function renderKPI() {
-  const agg = aggregate();
-  const latest = agg[agg.length - 1];
-  const prev = agg.length > 1 ? agg[0] : null;
-
-  const totalRev = agg.reduce((s, a) => s + a.rev, 0);
-  const totalCost = agg.reduce((s, a) => s + a.cost, 0);
-  const totalProfit = agg.reduce((s, a) => s + a.profit, 0);
-  const margin = totalRev ? (totalProfit / totalRev * 100) : 0;
-
-  const revChange = prev && prev.rev ? ((latest.rev - prev.rev) / prev.rev * 100).toFixed(1) : null;
-  const profitChange = prev && prev.profit ? ((latest.profit - prev.profit) / Math.abs(prev.profit) * 100).toFixed(1) : null;
-
-  document.getElementById('kpiRow').innerHTML = `
-    <div class="kpi-card">
-      <div class="label">1~2월 누적 매출</div>
-      <div class="value">${fmtM(totalRev)}M</div>
-      <div class="sub">${fmtFull(totalRev)}</div>
-    </div>
-    <div class="kpi-card">
-      <div class="label">1~2월 누적 비용</div>
-      <div class="value">${fmtM(-totalCost)}M</div>
-      <div class="sub">${fmtFull(totalCost)}</div>
-    </div>
-    <div class="kpi-card">
-      <div class="label">1~2월 영업이익</div>
-      <div class="value ${totalProfit >= 0 ? 'positive' : 'negative'}">${fmtM(totalProfit)}M</div>
-      <div class="sub">영업이익률 ${margin.toFixed(1)}%</div>
-    </div>
-    <div class="kpi-card">
-      <div class="label">2월 vs 1월 매출</div>
-      <div class="value ${revChange >= 0 ? 'positive' : 'negative'}">${revChange !== null ? (revChange > 0 ? '+' : '') + revChange + '%' : '-'}</div>
-      <div class="sub">1월 ${fmtM(agg[0].rev)}M → 2월 ${fmtM(agg[1].rev)}M</div>
-    </div>
-  `;
-}
-
-// ── 필터 칩 ──
-function renderFilters() {
-  const container = document.getElementById('filterChips');
-  // 전체 선택/해제
-  let html = `<div class="chip ${selectedBUs.size === PRODUCTS.length ? 'active' : ''}" data-bu="__ALL__">전체</div>`;
-  for (const bu of PRODUCTS) {
-    html += `<div class="chip ${selectedBUs.has(bu) ? 'active' : ''}" data-bu="${bu}">${bu}</div>`;
-  }
-  container.innerHTML = html;
-  container.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const bu = chip.dataset.bu;
-      if (bu === '__ALL__') {
-        if (selectedBUs.size === PRODUCTS.length) {
-          selectedBUs.clear();
-        } else {
-          selectedBUs = new Set(PRODUCTS);
-        }
-      } else {
-        if (selectedBUs.has(bu)) selectedBUs.delete(bu);
-        else selectedBUs.add(bu);
-      }
-      renderAll();
-    });
-  });
-}
-
-// ── 추이 차트 ──
-function renderTrendChart() {
-  const agg = aggregate();
-  const ctx = document.getElementById('trendChart').getContext('2d');
-  if (charts.trend) charts.trend.destroy();
-  charts.trend = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: MONTH_LABELS,
-      datasets: [
-        { label: '매출', data: agg.map(a => a.rev), backgroundColor: '#6366f1', borderRadius: 6, order: 2 },
-        { label: '비용', data: agg.map(a => -a.cost), backgroundColor: '#f87171', borderRadius: 6, order: 3 },
-        { label: '영업이익', data: agg.map(a => a.profit), type: 'line', borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', borderWidth: 3, pointRadius: 6, pointBackgroundColor: '#10b981', fill: false, order: 1, yAxisID: 'y' },
-      ]
-    },
-    options: {
-      responsive: true,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        tooltip: {
-          callbacks: { label: ctx => `${ctx.dataset.label}: ${fmt(ctx.raw)}` }
-        }
-      },
-      scales: {
-        y: {
-          ticks: { callback: v => (v / 1e9).toFixed(1) + 'B' },
-          grid: { color: '#f3f4f6' }
-        },
-        x: { grid: { display: false } }
-      }
-    }
-  });
-}
-
-// ── 사업부별 매출 차트 ──
-function renderRevChart() {
-  const data = buTotals().filter(d => d.rev > 0);
-  const ctx = document.getElementById('revChart').getContext('2d');
-  if (charts.rev) charts.rev.destroy();
-
-  const colors = ['#6366f1','#8b5cf6','#a78bfa','#c4b5fd','#818cf8','#4f46e5','#7c3aed','#5b21b6','#4338ca','#3730a3','#312e81','#1e1b4b','#6d28d9','#7e22ce','#9333ea','#a855f7','#c084fc'];
-  charts.rev = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: data.map(d => d.bu),
-      datasets: [{ data: data.map(d => d.rev), backgroundColor: colors, borderRadius: 6 }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => fmt(ctx.raw) } }
-      },
-      scales: {
-        x: { ticks: { callback: v => (v / 1e9).toFixed(1) + 'B' }, grid: { color: '#f3f4f6' } },
-        y: { grid: { display: false } }
-      }
-    }
-  });
-}
-
-// ── 사업부별 영업이익 차트 ──
-function renderProfitChart() {
-  const data = buTotals();
-  const ctx = document.getElementById('profitChart').getContext('2d');
-  if (charts.profit) charts.profit.destroy();
-  charts.profit = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: data.map(d => d.bu),
-      datasets: [{
-        data: data.map(d => d.profit),
-        backgroundColor: data.map(d => d.profit >= 0 ? '#10b981' : '#ef4444'),
-        borderRadius: 6
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => fmt(ctx.raw) } }
-      },
-      scales: {
-        x: { ticks: { callback: v => (v / 1e9).toFixed(1) + 'B' }, grid: { color: '#f3f4f6' } },
-        y: { grid: { display: false } }
-      }
-    }
-  });
-}
-
-// ── 비용 구성 차트 ──
-function renderCostChart() {
-  const costMap = {};
-  for (const bu of selectedBUs) {
-    for (const m of MONTHS) {
-      const key = `${bu}_${m}`;
-      const det = DETAIL[key];
-      if (!det) continue;
-      for (const [l1, val] of Object.entries(det)) {
-        if (l1 === '영업수익' || l1 === '영업외수익' || l1 === '영업외비용' || l1 === '매출할인' || l1 === '사업개발비지원금') continue;
-        if (val >= 0) continue;
-        costMap[l1] = (costMap[l1] || 0) + Math.abs(val);
-      }
-    }
-  }
-  const sorted = Object.entries(costMap).sort((a, b) => b[1] - a[1]);
-  const top10 = sorted.slice(0, 10);
-  const otherSum = sorted.slice(10).reduce((s, [, v]) => s + v, 0);
-  if (otherSum > 0) top10.push(['기타', otherSum]);
-
-  const colors = ['#ef4444','#f97316','#f59e0b','#eab308','#84cc16','#22c55e','#14b8a6','#06b6d4','#3b82f6','#8b5cf6','#9ca3af'];
-  const ctx = document.getElementById('costChart').getContext('2d');
-  if (charts.cost) charts.cost.destroy();
-
-  const buLabel = selectedBUs.size === PRODUCTS.length ? '전사' : [...selectedBUs].join(', ');
-  document.getElementById('costTitle').textContent = `비용 항목별 구성 — ${buLabel}`;
-
-  charts.cost = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: top10.map(d => d[0]),
-      datasets: [{ data: top10.map(d => d[1]), backgroundColor: colors, borderWidth: 2, borderColor: '#fff' }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: 'right', labels: { font: { size: 12 }, padding: 12 } },
-        tooltip: { callbacks: { label: ctx => `${ctx.label}: ${fmt(-ctx.raw)} (${(ctx.raw / top10.reduce((s, d) => s + d[1], 0) * 100).toFixed(1)}%)` } }
-      }
-    }
-  });
-}
-
-// ── 상세 테이블 ──
-function renderTable() {
-  const data = buTotals();
-  let html = `<thead><tr><th>사업부</th><th>1월 매출</th><th>2월 매출</th><th>누적 매출</th><th>1월 비용</th><th>2월 비용</th><th>누적 비용</th><th>영업이익</th><th>이익률</th></tr></thead><tbody>`;
-
-  for (const d of data) {
-    const m1 = RAW[d.bu]?.['1'] || { revenue: 0, cost: 0 };
-    const m2 = RAW[d.bu]?.['2'] || { revenue: 0, cost: 0 };
-    const margin = d.rev ? (d.profit / d.rev * 100).toFixed(1) + '%' : '-';
-    const profitClass = d.profit >= 0 ? 'num-pos' : 'num-neg';
-    html += `<tr>
-      <td>${d.bu}</td>
-      <td>${fmtM(m1.revenue)}M</td>
-      <td>${fmtM(m2.revenue)}M</td>
-      <td><b>${fmtM(d.rev)}M</b></td>
-      <td>${fmtM(m1.cost)}M</td>
-      <td>${fmtM(m2.cost)}M</td>
-      <td><b>${fmtM(d.cost)}M</b></td>
-      <td class="${profitClass}"><b>${fmtM(d.profit)}M</b></td>
-      <td class="${profitClass}">${margin}</td>
-    </tr>`;
-  }
-
-  // 합계
-  const totRev = data.reduce((s, d) => s + d.rev, 0);
-  const totCost = data.reduce((s, d) => s + d.cost, 0);
-  const totProfit = data.reduce((s, d) => s + d.profit, 0);
-  const totM1Rev = data.reduce((s, d) => s + (RAW[d.bu]?.['1']?.revenue || 0), 0);
-  const totM2Rev = data.reduce((s, d) => s + (RAW[d.bu]?.['2']?.revenue || 0), 0);
-  const totM1Cost = data.reduce((s, d) => s + (RAW[d.bu]?.['1']?.cost || 0), 0);
-  const totM2Cost = data.reduce((s, d) => s + (RAW[d.bu]?.['2']?.cost || 0), 0);
-  const totMargin = totRev ? (totProfit / totRev * 100).toFixed(1) + '%' : '-';
-  html += `<tr style="font-weight:700;border-top:2px solid #1a1a2e">
-    <td>합계</td>
-    <td>${fmtM(totM1Rev)}M</td><td>${fmtM(totM2Rev)}M</td><td>${fmtM(totRev)}M</td>
-    <td>${fmtM(totM1Cost)}M</td><td>${fmtM(totM2Cost)}M</td><td>${fmtM(totCost)}M</td>
-    <td class="${totProfit >= 0 ? 'num-pos' : 'num-neg'}">${fmtM(totProfit)}M</td>
-    <td class="${totProfit >= 0 ? 'num-pos' : 'num-neg'}">${totMargin}</td>
-  </tr>`;
-  html += '</tbody>';
-  document.getElementById('detailTable').innerHTML = html;
-}
-
-// ── 전체 렌더 ──
-function renderAll() {
-  renderFilters();
-  renderKPI();
-  renderTrendChart();
-  renderRevChart();
-  renderProfitChart();
-  renderCostChart();
-  renderTable();
-}
-
-renderAll();
+const D={"KDC":{"1":{"revenue":448247500,"cost":-331755038,"op_profit":116492462,"extra_rev":0,"extra_cost":0,"rev_detail":{"수강료수입":448247500},"cost_detail":{"직원급여":-58653652,"4대보험":-4338500,"퇴직급여":-12463809,"광고선전비":-189651624,"외주용역비":-53195395,"지급수수료":-11162572,"여비교통비":-421600,"복리후생비":-662455,"교육훈련비":-272909,"도서인쇄비":-910840,"직무수행비":-17182,"운반비":-4500}},"2":{"revenue":494653210,"cost":-327842349,"op_profit":166810861,"extra_rev":0,"extra_cost":-967760,"rev_detail":{"수강료수입":494653210},"cost_detail":{"직원급여":-48519825,"4대보험":-4851312,"퇴직급여":-5591476,"광고선전비":-217814182,"외주용역비":-40310782,"지급수수료":-9519833,"여비교통비":-204800,"접대비":-78840,"복리후생비":-349545,"교육훈련비":-292500,"도서인쇄비":-271890,"직무수행비":-37364}}},"KDT":{"1":{"revenue":5537419930,"cost":-2902684796,"op_profit":2634735134,"extra_rev":0,"extra_cost":0,"rev_detail":{"수강료수입":5537419930},"cost_detail":{"직원급여":-393745287,"상여금":-8050000,"4대보험":-33035017,"퇴직급여":-35798088,"광고선전비":-865601875,"외주용역비":-1497550631,"지급수수료":-164556112,"여비교통비":-2232320,"접대비":-4689360,"복리후생비":-6079402,"보험료":-602200,"교육훈련비":-2242782,"도서인쇄비":-5437315,"직무수행비":-547156,"운반비":-40400,"소모품비":-329039,"사업개발비지원금":126544900,"감가상각비":-8692712}},"2":{"revenue":4014318106,"cost":-2741092711,"op_profit":1273225395,"extra_rev":2095632,"extra_cost":0,"rev_detail":{"수강료수입":4014318106},"cost_detail":{"직원급여":-385213029,"상여금":-6770000,"4대보험":-35202751,"퇴직급여":-26574485,"광고선전비":-775457732,"외주용역비":-1397209346,"지급수수료":-133434423,"여비교통비":-1826030,"접대비":-3252498,"복리후생비":-4218939,"교육훈련비":-2449773,"도서인쇄비":-4696870,"직무수행비":-352910,"운반비":-69300,"사업개발비지원금":54898400,"감가상각비":-19263025}}},"재직자KDT":{"1":{"revenue":276536020,"cost":-209283797,"op_profit":67252223,"extra_rev":0,"extra_cost":0,"rev_detail":{"수강료수입":276536020},"cost_detail":{"직원급여":-47166284,"상여금":-660000,"4대보험":-3621377,"퇴직급여":-1611305,"광고선전비":-31275621,"외주용역비":-121585006,"지급수수료":-2040884,"여비교통비":-381700,"복리후생비":-381545,"보험료":-30000,"교육훈련비":-27273,"도서인쇄비":-462620,"직무수행비":-40182}},"2":{"revenue":168862670,"cost":-190440496,"op_profit":-21577826,"extra_rev":0,"extra_cost":0,"rev_detail":{"수강료수입":168862670},"cost_detail":{"직원급여":-47306678,"상여금":-630000,"4대보험":-4396006,"퇴직급여":-2501210,"광고선전비":-117577335,"외주용역비":-7638750,"지급수수료":-9934950,"여비교통비":-149400,"복리후생비":-189817,"도서인쇄비":-116350}}},"AX교육":{"1":{"revenue":50865228,"cost":-300536637,"op_profit":-249671409,"extra_rev":0,"extra_cost":0,"rev_detail":{"수강료수입":50865228},"cost_detail":{"직원급여":-68530851,"4대보험":16577200,"퇴직급여":-11327333,"광고선전비":-41993165,"외주용역비":-153863975,"지급수수료":-35574942,"여비교통비":-2040370,"접대비":-327900,"복리후생비":-2718874,"교육훈련비":-204000,"도서인쇄비":-275940,"직무수행비":-97091,"운반비":-131860,"소모품비":-27536}},"2":{"revenue":172305455,"cost":-309616624,"op_profit":-137311169,"extra_rev":0,"extra_cost":0,"rev_detail":{"수강료수입":172305455},"cost_detail":{"직원급여":-77442898,"4대보험":-62547940,"퇴직급여":-4872891,"광고선전비":-22649606,"외주용역비":-89713000,"지급수수료":-47226539,"여비교통비":-1228100,"접대비":-917000,"복리후생비":-2356219,"교육훈련비":-90000,"도서인쇄비":-401660,"직무수행비":-129491,"운반비":-41280}}},"B2C신사업":{"1":{"revenue":64204647,"cost":-164446449,"op_profit":-100241802,"extra_rev":0,"extra_cost":0,"rev_detail":{"수강료수입":78486666,"서비스매출":27181,"매출할인":-14309200},"cost_detail":{"직원급여":-41242934,"4대보험":-2334351,"퇴직급여":-5305126,"광고선전비":-72700238,"외주용역비":-29973630,"지급수수료":-9612041,"여비교통비":-683880,"접대비":-391200,"복리후생비":-1656820,"도서인쇄비":-506820,"직무수행비":-39409}},"2":{"revenue":102773666,"cost":-103835843,"op_profit":-1062177,"extra_rev":0,"extra_cost":0,"rev_detail":{"수강료수입":192631666,"매출할인":-89858000},"cost_detail":{"직원급여":-22709415,"4대보험":-5252360,"퇴직급여":-1619896,"광고선전비":-51508374,"외주용역비":-16276667,"지급수수료":-4551514,"여비교통비":-262400,"접대비":-136100,"복리후생비":-710000,"교육훈련비":-225455,"도서인쇄비":-272500,"직무수행비":-200999,"운반비":-4800,"소모품비":-105363}}},"커리어":{"1":{"revenue":0,"cost":-193717793,"op_profit":-193717793,"extra_rev":0,"extra_cost":0,"rev_detail":{},"cost_detail":{"직원급여":-60622638,"4대보험":-4452670,"퇴직급여":-1400123,"광고선전비":-1704250,"외주용역비":-120065634,"지급수수료":-1870135,"여비교통비":-985000,"접대비":-10800,"복리후생비":-1790634,"교육훈련비":-81818,"도서인쇄비":-575454,"직무수행비":-158637}},"2":{"revenue":0,"cost":-168660824,"op_profit":-168660824,"extra_rev":54,"extra_cost":-16000000,"rev_detail":{},"cost_detail":{"직원급여":-51650494,"4대보험":-3645649,"퇴직급여":-3735905,"광고선전비":-145500,"외주용역비":-107667044,"지급수수료":-306343,"여비교통비":-407300,"복리후생비":-656456,"교육훈련비":-90000,"도서인쇄비":-246770,"직무수행비":-109363}}},"기타":{"1":{"revenue":1475000,"cost":-50222046,"op_profit":-48747046,"extra_rev":1275429,"extra_cost":0,"rev_detail":{"수강료수입":2510000,"매출할인":-1035000},"cost_detail":{"직원급여":-1456668,"4대보험":-126524,"퇴직급여":-121027,"광고선전비":-2648336,"외주용역비":-45615340,"지급수수료":-254151}},"2":{"revenue":4630000,"cost":-15817426,"op_profit":-11187426,"extra_rev":1516015,"extra_cost":0,"rev_detail":{"수강료수입":5010000,"매출할인":-380000},"cost_detail":{"광고선전비":-2338529,"외주용역비":-13271820,"지급수수료":-207077}}},"사업공통":{"1":{"revenue":0,"cost":-278115700,"op_profit":-278115700,"extra_rev":0,"extra_cost":0,"rev_detail":{},"cost_detail":{"직원급여":-147122970,"4대보험":-10237960,"퇴직급여":-28843946,"광고선전비":-13660057,"외주용역비":-10983200,"지급수수료":-59517242,"여비교통비":-1141970,"복리후생비":-2592733,"교육훈련비":-811923,"도서인쇄비":-1679020,"직무수행비":-557270,"소모품비":-166609,"통신비":-800800}},"2":{"revenue":0,"cost":-303864706,"op_profit":-303864706,"extra_rev":39733,"extra_cost":-369831,"rev_detail":{},"cost_detail":{"직원급여":-162347533,"4대보험":-15454225,"퇴직급여":-40309148,"광고선전비":-11098890,"외주용역비":-5335500,"지급수수료":-59042452,"여비교통비":-771200,"접대비":-1199700,"복리후생비":-3514427,"교육훈련비":-445455,"도서인쇄비":-1581620,"직무수행비":-1624438,"소모품비":-339318,"통신비":-800800}}},"게임":{"1":{"revenue":394196864,"cost":-585308997,"op_profit":-191112133,"extra_rev":83058,"extra_cost":-1576674,"rev_detail":{"수강료수입":24545455,"게임매출":369651409},"cost_detail":{"직원급여":-89558750,"상여금":-18055560,"4대보험":-8412720,"퇴직급여":-10187239,"광고선전비":-385720679,"외주용역비":-7450268,"지급수수료":-55337840,"여비교통비":-2326880,"복리후생비":-6423464,"교육훈련비":-335546,"도서인쇄비":-495270,"직무수행비":-131818,"소모품비":-872963}},"2":{"revenue":812627562,"cost":-669309940,"op_profit":143317622,"extra_rev":133635,"extra_cost":-481789,"rev_detail":{"게임매출":812627562},"cost_detail":{"직원급여":-90069085,"상여금":-18055560,"4대보험":-8579000,"퇴직급여":-5682573,"광고선전비":-419374522,"외주용역비":-15502363,"지급수수료":-106968006,"여비교통비":-1603880,"접대비":-40000,"복리후생비":-2558321,"도서인쇄비":-876630}}},"AX솔루션":{"1":{"revenue":0,"cost":-13326036,"op_profit":-13326036,"extra_rev":0,"extra_cost":0,"rev_detail":{},"cost_detail":{"직원급여":-23877180,"4대보험":20767010,"퇴직급여":-4641492,"광고선전비":-621400,"외주용역비":-1050000,"지급수수료":-2847138,"여비교통비":-681100,"복리후생비":-277454,"도서인쇄비":-61800,"직무수행비":-10182,"운반비":-25300}},"2":{"revenue":0,"cost":-126882325,"op_profit":-126882325,"extra_rev":0,"extra_cost":0,"rev_detail":{},"cost_detail":{"직원급여":-33678595,"4대보험":-56680200,"퇴직급여":-1980293,"광고선전비":-4326519,"외주용역비":-6150000,"지급수수료":-22492438,"여비교통비":-610700,"접대비":-149800,"복리후생비":-504562,"도서인쇄비":-192400,"직무수행비":-116818}}},"글로벌":{"1":{"revenue":0,"cost":-16746270,"op_profit":-16746270,"extra_rev":0,"extra_cost":0,"rev_detail":{},"cost_detail":{"직원급여":-9500010,"4대보험":-856010,"퇴직급여":-789310,"지급수수료":-564037,"여비교통비":-2828483,"복리후생비":-31363,"교육훈련비":-13636,"도서인쇄비":-137320,"소모품비":-571648,"지급임차료":-1454453}},"2":{"revenue":0,"cost":-19516203,"op_profit":-19516203,"extra_rev":0,"extra_cost":0,"rev_detail":{},"cost_detail":{"직원급여":-9500010,"4대보험":-855850,"퇴직급여":-1749266,"지급수수료":-790422,"여비교통비":-4347464,"복리후생비":-292923,"교육훈련비":-90000,"도서인쇄비":-184760,"직무수행비":-28820,"소모품비":-156868,"지급임차료":-1519820}}},"스튜디오":{"1":{"revenue":81900978,"cost":-53184343,"op_profit":28716635,"extra_rev":2,"extra_cost":0,"rev_detail":{"서비스매출":81900978},"cost_detail":{"지급수수료":-52950132,"통신비":-234211}},"2":{"revenue":66613972,"cost":-50053764,"op_profit":16560208,"extra_rev":6,"extra_cost":0,"rev_detail":{"서비스매출":66613972},"cost_detail":{"지급수수료":-49825631,"통신비":-228133}}},"전사공통":{"1":{"revenue":0,"cost":-2084449588,"op_profit":-2084449588,"extra_rev":-11197562,"extra_cost":-732865169,"rev_detail":{},"cost_detail":{"직원급여":-194832838,"상여금":-1000000000,"4대보험":-14086301,"퇴직급여":-19100688,"광고선전비":-82500000,"지급수수료":-342172717,"여비교통비":-3673692,"접대비":-3979102,"복리후생비":-147012656,"교육훈련비":-2624837,"도서인쇄비":-14291663,"직무수행비":-772546,"운반비":-182400,"소모품비":-39540163,"통신비":-2976610,"지급임차료":-135779230,"사업개발비지원금":7200000,"감가상각비":-58813892,"세금과공과금":-11098710,"무형상각비":-773550,"경상연구개발비":-17437993}},"2":{"revenue":0,"cost":-821138347,"op_profit":-821138347,"extra_rev":9653764,"extra_cost":-29462135,"rev_detail":{},"cost_detail":{"직원급여":-191803664,"4대보험":-17122697,"퇴직급여":-17535788,"광고선전비":-1200187,"지급수수료":-316970097,"여비교통비":-3305004,"접대비":-5135990,"복리후생비":-72776771,"교육훈련비":-3632886,"도서인쇄비":-2932250,"직무수행비":-654044,"운반비":-166210,"소모품비":-67518377,"통신비":-4525546,"사업개발비지원금":19800000,"감가상각비":-91383532,"세금과공과금":-24503920,"무형상각비":-773494,"경상연구개발비":-18997890}}},"합계":{"1":{"revenue":6854846167,"cost":-7183777490,"op_profit":-328931323},"2":{"revenue":5836784641,"cost":-5848071558,"op_profit":-11286917}}};
+const BU=["KDC", "KDT", "재직자KDT", "AX교육", "B2C신사업", "커리어", "기타", "사업공통", "게임", "AX솔루션", "글로벌", "스튜디오", "전사공통"];
+const CI=["직원급여", "상여금", "4대보험", "퇴직급여", "광고선전비", "외주용역비", "지급수수료", "여비교통비", "접대비", "복리후생비", "보험료", "교육훈련비", "도서인쇄비", "직무수행비", "운반비", "소모품비", "통신비", "지급임차료", "사업개발비지원금", "감가상각비", "세금과공과금", "무형상각비", "경상연구개발비"];
+const RI=["수강료수입", "콘텐츠개발수입", "서비스매출", "게임매출", "매출할인"];
+const MS=[1,2],ML=['1월','2월'];
+let sel=new Set(BU),tab='ov',lv='l1',ch={};
+const fm=v=>{if(!v)return'-';return(v/1e6).toLocaleString('ko-KR',{maximumFractionDigits:0})+'M'};
+const fw=v=>v?v.toLocaleString('ko-KR')+'원':'-';
+const cl=v=>v>=0?'p':'n';
+function rF(){const c=document.getElementById('chips');let h='<div class="chip '+(sel.size===BU.length?'on':'')+'" data-b="*">전체</div>';
+BU.forEach(b=>{h+='<div class="chip '+(sel.has(b)?'on':'')+'" data-b="'+b+'">'+b+'</div>'});c.innerHTML=h;
+c.querySelectorAll('.chip').forEach(e=>e.onclick=()=>{const b=e.dataset.b;if(b==='*'){sel=sel.size===BU.length?new Set():new Set(BU)}else{sel.has(b)?sel.delete(b):sel.add(b)}rA()})}
+function rK(){const ag=MS.map(m=>{let r=0,c=0,p=0;for(const b of sel){const d=D[b]?.[m];if(d){r+=d.revenue;c+=d.cost;p+=d.op_profit}}return{r,c,p}});
+const tR=ag.reduce((s,a)=>s+a.r,0),tC=ag.reduce((s,a)=>s+a.c,0),tP=ag.reduce((s,a)=>s+a.p,0);
+const mg=tR?(tP/tR*100).toFixed(1):'-';const chg=ag[0].r?((ag[1].r-ag[0].r)/ag[0].r*100).toFixed(1):'-';
+const bc=[...sel].filter(b=>{let r=0;MS.forEach(m=>r+=(D[b]?.[m]?.revenue||0));return r>0}).length;
+document.getElementById('kpi').innerHTML='<div class="kc"><div class="lb">누적 매출</div><div class="vl">'+fm(tR)+'</div><div class="sm">'+fw(tR)+'</div></div><div class="kc"><div class="lb">누적 비용</div><div class="vl">'+fm(tC)+'</div><div class="sm">'+fw(tC)+'</div></div><div class="kc"><div class="lb">영업이익</div><div class="vl '+cl(tP)+'">'+fm(tP)+'</div><div class="sm">이익률 '+mg+'%</div></div><div class="kc"><div class="lb">2월 vs 1월 매출</div><div class="vl '+(parseFloat(chg)>=0?'p':'n')+'">'+chg+'%</div><div class="sm">1월 '+fm(ag[0].r)+' → 2월 '+fm(ag[1].r)+'</div></div><div class="kc"><div class="lb">매출 발생 사업부</div><div class="vl">'+bc+'</div><div class="sm">/ '+sel.size+'개 선택</div></div>'}
+function r1(){const ag=MS.map(m=>{let r=0,c=0,p=0;for(const b of sel){const d=D[b]?.[m];if(d){r+=d.revenue;c+=d.cost;p+=d.op_profit}}return{r,c,p}});
+const x=document.getElementById('c1').getContext('2d');if(ch.c1)ch.c1.destroy();
+ch.c1=new Chart(x,{type:'bar',data:{labels:ML,datasets:[{label:'매출',data:ag.map(a=>a.r),backgroundColor:'#6366f1',borderRadius:6,order:2},{label:'비용',data:ag.map(a=>a.c),backgroundColor:'#f87171',borderRadius:6,order:3},{label:'영업이익',data:ag.map(a=>a.p),type:'line',borderColor:'#10b981',borderWidth:3,pointRadius:6,pointBackgroundColor:'#10b981',fill:false,order:1}]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+fm(c.raw)}}},scales:{y:{ticks:{callback:v=>(v/1e9).toFixed(1)+'B'},grid:{color:'#f3f4f6'}},x:{grid:{display:false}}}}})}
+function r2(){const a=[];for(const b of sel){let r=0;MS.forEach(m=>r+=(D[b]?.[m]?.revenue||0));if(r>0)a.push({b,r})}a.sort((x,y)=>y.r-x.r);
+const co=['#6366f1','#8b5cf6','#a78bfa','#c4b5fd','#818cf8','#4f46e5','#7c3aed','#5b21b6','#4338ca','#3730a3','#312e81','#1e1b4b','#6d28d9'];
+const x=document.getElementById('c2').getContext('2d');if(ch.c2)ch.c2.destroy();
+ch.c2=new Chart(x,{type:'bar',data:{labels:a.map(d=>d.b),datasets:[{data:a.map(d=>d.r),backgroundColor:co,borderRadius:6}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fm(c.raw)}}},scales:{x:{ticks:{callback:v=>(v/1e9).toFixed(1)+'B'}},y:{grid:{display:false}}}}})}
+function r3(){const cm={};for(const b of sel){MS.forEach(m=>{const cd=D[b]?.[m]?.cost_detail;if(!cd)return;for(const[k,v]of Object.entries(cd)){if(v<0)cm[k]=(cm[k]||0)+Math.abs(v)}})}
+const s=Object.entries(cm).sort((a,b)=>b[1]-a[1]);const t=s.slice(0,8);const e=s.slice(8).reduce((s,[,v])=>s+v,0);if(e>0)t.push(['기타',e]);
+const co=['#ef4444','#f97316','#f59e0b','#84cc16','#22c55e','#14b8a6','#06b6d4','#3b82f6','#8b5cf6','#9ca3af'];
+const x=document.getElementById('c3').getContext('2d');if(ch.c3)ch.c3.destroy();
+ch.c3=new Chart(x,{type:'doughnut',data:{labels:t.map(d=>d[0]),datasets:[{data:t.map(d=>d[1]),backgroundColor:co,borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:11},padding:8}},tooltip:{callbacks:{label:c=>c.label+': '+fm(-c.raw)}}}}})}
+function r4(){const a=[];for(const b of sel){let p=0;MS.forEach(m=>p+=(D[b]?.[m]?.op_profit||0));a.push({b,p})}a.sort((x,y)=>y.p-x.p);
+const x=document.getElementById('c4').getContext('2d');if(ch.c4)ch.c4.destroy();
+ch.c4=new Chart(x,{type:'bar',data:{labels:a.map(d=>d.b),datasets:[{data:a.map(d=>d.p),backgroundColor:a.map(d=>d.p>=0?'#10b981':'#ef4444'),borderRadius:6}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fm(c.raw)}}},scales:{x:{ticks:{callback:v=>(v/1e9).toFixed(1)+'B'}},y:{grid:{display:false}}}}})}
+function rCT(){const bs=[...sel];let h='<thead><tr><th>사업부</th>';MS.forEach(m=>{h+='<th>'+m+'월 매출</th><th>'+m+'월 비용</th><th>'+m+'월 이익</th>'});
+h+='<th>누적 이익</th><th>이익률</th></tr></thead><tbody>';let tR=0,tC=0,tP=0;
+for(const b of bs){let r=0,c=0,p=0;h+='<tr><td>'+b+'</td>';MS.forEach(m=>{const d=D[b]?.[m]||{revenue:0,cost:0,op_profit:0};r+=d.revenue;c+=d.cost;p+=d.op_profit;
+h+='<td>'+fm(d.revenue)+'</td><td>'+fm(d.cost)+'</td><td class="'+cl(d.op_profit)+'">'+fm(d.op_profit)+'</td>'});
+const mg=r?(p/r*100).toFixed(1)+'%':'-';h+='<td class="'+cl(p)+'"><b>'+fm(p)+'</b></td><td class="'+cl(p)+'">'+mg+'</td></tr>';tR+=r;tC+=c;tP+=p}
+h+='<tr class="rs"><td>합계</td>';MS.forEach(m=>{let mr=0,mc=0,mp=0;for(const b of sel){const d=D[b]?.[m]||{};mr+=d.revenue||0;mc+=d.cost||0;mp+=d.op_profit||0}
+h+='<td>'+fm(mr)+'</td><td>'+fm(mc)+'</td><td class="'+cl(mp)+'">'+fm(mp)+'</td>'});
+const tMg=tR?(tP/tR*100).toFixed(1)+'%':'-';h+='<td class="'+cl(tP)+'"><b>'+fm(tP)+'</b></td><td class="'+cl(tP)+'">'+tMg+'</td></tr></tbody>';
+document.getElementById('cpt').innerHTML=h}
+function rPL(){const ct=document.getElementById('t-pl');let h='';
+for(const bu of [...sel]){const d1=D[bu]?.['1']||{},d2=D[bu]?.['2']||{};
+h+='<div class="ps"><h3>'+bu+' \u2014 월별 손익계산서</h3><table><thead><tr><th>항목</th><th>1월</th><th>2월</th><th>합계</th></tr></thead><tbody>';
+const rv1=d1.revenue||0,rv2=d2.revenue||0;
+h+='<tr class="r1"><td>매출액</td><td>'+fm(rv1)+'</td><td>'+fm(rv2)+'</td><td><b>'+fm(rv1+rv2)+'</b></td></tr>';
+if(lv==='l2'){const allR=new Set([...Object.keys(d1.rev_detail||{}),...Object.keys(d2.rev_detail||{})]);
+RI.forEach(k=>{if(!allR.has(k))return;const v1=(d1.rev_detail||{})[k]||0,v2=(d2.rev_detail||{})[k]||0;
+if(v1||v2)h+='<tr class="ri"><td>'+k+'</td><td>'+fm(v1)+'</td><td>'+fm(v2)+'</td><td>'+fm(v1+v2)+'</td></tr>'})}
+h+='<tr class="rg"><td colspan="4"></td></tr>';
+const cv1=d1.cost||0,cv2=d2.cost||0;
+CI.forEach(k=>{const v1=(d1.cost_detail||{})[k]||0,v2=(d2.cost_detail||{})[k]||0;
+if(v1||v2)h+='<tr class="'+(lv==='l1'?'r1':'ri')+'"><td>'+k+'</td><td>'+fm(v1)+'</td><td>'+fm(v2)+'</td><td>'+fm(v1+v2)+'</td></tr>'});
+h+='<tr class="rs"><td>영업비용 합계</td><td>'+fm(cv1)+'</td><td>'+fm(cv2)+'</td><td>'+fm(cv1+cv2)+'</td></tr>';
+const op1=d1.op_profit||0,op2=d2.op_profit||0;
+h+='<tr class="rs"><td>영업이익</td><td class="'+cl(op1)+'">'+fm(op1)+'</td><td class="'+cl(op2)+'">'+fm(op2)+'</td><td class="'+cl(op1+op2)+'"><b>'+fm(op1+op2)+'</b></td></tr>';
+h+='<tr><td style="font-weight:600">영업이익률</td><td class="'+cl(op1)+'">'+(rv1?(op1/rv1*100).toFixed(1)+'%':'-')+'</td><td class="'+cl(op2)+'">'+(rv2?(op2/rv2*100).toFixed(1)+'%':'-')+'</td>';
+const tR=rv1+rv2,tP=op1+op2;h+='<td class="'+cl(tP)+'">'+(tR?(tP/tR*100).toFixed(1)+'%':'-')+'</td></tr>';
+const er1=d1.extra_rev||0,er2=d2.extra_rev||0,ec1=d1.extra_cost||0,ec2=d2.extra_cost||0;
+if(er1||er2)h+='<tr class="rg"><td colspan="4"></td></tr><tr class="r1"><td>영업외이익</td><td>'+fm(er1)+'</td><td>'+fm(er2)+'</td><td>'+fm(er1+er2)+'</td></tr>';
+if(ec1||ec2)h+='<tr class="r1"><td>영업외비용</td><td>'+fm(ec1)+'</td><td>'+fm(ec2)+'</td><td>'+fm(ec1+ec2)+'</td></tr>';
+h+='</tbody></table></div>'}
+ct.innerHTML=h||'<div style="padding:40px;text-align:center;color:#9ca3af">사업부를 선택하세요</div>'}
+document.getElementById('tabs').onclick=e=>{if(!e.target.classList.contains('tab'))return;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));e.target.classList.add('on');
+tab=e.target.dataset.t;['ov','pl','cp'].forEach(t=>{document.getElementById('t-'+t).classList.toggle('hid',t!==tab)});rA()};
+document.getElementById('tgl').onclick=e=>{if(!e.target.classList.contains('b'))return;document.querySelectorAll('#tgl .b').forEach(b=>b.classList.remove('on'));e.target.classList.add('on');lv=e.target.dataset.l;rA()};
+function rA(){rF();if(tab==='ov'){rK();r1();r2();r3()}if(tab==='pl')rPL();if(tab==='cp'){r4();rCT()}}
+rA();
 </script>
 </body>
 </html>
